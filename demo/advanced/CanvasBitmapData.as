@@ -7,9 +7,12 @@ package advanced
 
 	public class CanvasBitmapData extends BitmapData
 	{	
-		public function CanvasBitmapData(width : Number, height : Number ) : void
+		private var bgColor:uint;
+		
+		public function CanvasBitmapData(width : Number, height : Number ,transparent:Boolean=false,color:uint=0x000000) : void
 		{
-			super(width, height, false, 0x000000);
+			this.bgColor=color;
+			super(width, height, transparent, color);
 		}
 
 		public function blur( amountX : uint, amountY : uint, quality : uint ) : void
@@ -24,7 +27,8 @@ package advanced
 
 		public function clear() : void
 		{
-			fillRect(rect, 0x000000);
+			
+			fillRect(rect, bgColor);
 		}
 	}
 }
