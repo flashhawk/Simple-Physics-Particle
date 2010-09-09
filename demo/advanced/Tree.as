@@ -1,6 +1,7 @@
 package advanced
 {
 	import flash.display.StageDisplayState;
+
 	import cn.flashhawk.spp.ParticlesSystem;
 	import cn.flashhawk.spp.PhysicsParticle;
 	import cn.flashhawk.spp.geom.Vector2D;
@@ -28,7 +29,7 @@ package advanced
 
 		private var canvasBmd : CanvasBitmapData;
 		private var canvas : Bitmap;
-		
+
 		private var r : Number = 255; 
 		private var g : Number = 127; 
 		private var b : Number = 0; 
@@ -36,39 +37,41 @@ package advanced
 		private var ri : Number = 0.02;
 		private var gi : Number = 0.015; 
 		private var bi : Number = 0.025;
-		
-		private var isCanClick:Boolean=false;
+
+		private var isCanClick : Boolean = false;
 
 		public function Tree()
 		{
 			
 			this.addEventListener(Event.ADDED_TO_STAGE, init);
 		}
-		private function init(e:Event):void
+
+		private function init(e : Event) : void
 		{
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
-			stage.doubleClickEnabled= true;
-			stage.addEventListener(MouseEvent.DOUBLE_CLICK, function(e:MouseEvent):void
+			stage.doubleClickEnabled = true;
+			stage.addEventListener(MouseEvent.DOUBLE_CLICK, function(e : MouseEvent):void
 			{
-				if(stage.displayState!=StageDisplayState.FULL_SCREEN)
+				if(stage.displayState != StageDisplayState.FULL_SCREEN)
 				{
-					stage.displayState=StageDisplayState.FULL_SCREEN;
-				}else
-				{
-					stage.displayState=StageDisplayState.NORMAL;
+					stage.displayState = StageDisplayState.FULL_SCREEN;
 				}
-				
+				else
+				{
+					stage.displayState = StageDisplayState.NORMAL;
+				}
 			});
 			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-			stage.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void
+			stage.addEventListener(MouseEvent.CLICK, function(e : MouseEvent):void
 			{
 				if(isCanClick) run();
 			});
 			stage.addEventListener(Event.RESIZE, initCanvas);
 			initCanvas();
 		}
-		private function initCanvas(e:Event=null):void
+
+		private function initCanvas(e : Event = null) : void
 		{
 			if(canvasBmd != null)canvasBmd.dispose();
 			if(canvas != null)removeChild(canvas);
@@ -80,22 +83,25 @@ package advanced
 			ps.removeAllParticles();
 			run();
 		}
+
 		private function onEnterFrame(event : Event) : void 
 		{
 			//canvasBmd.colorMod(-1, -1, -1,0);
-			var color : uint = (Math.sin(r+= ri) * 128 + 127) << 16 | (Math.sin(g += gi) * 128 + 127) << 8 | (Math.sin(b += bi) * 128 + 127) ;
-			for(var i : int = ps.particles.length;i > 0;i--)
+			var color : uint = (Math.sin(r += ri) * 128 + 127) << 16 | (Math.sin(g += gi) * 128 + 127) << 8 | (Math.sin(b += bi) * 128 + 127) ;
+			var l : int = ps.particles.length;
+			while(l-- > 0)
 			{
-				var rectWdith:Number=branchWidth / ps.particles[i - 1].extra.level;
-				canvasBmd.fillRect(new Rectangle(ps.particles[i - 1].x-rectWdith/2, ps.particles[i - 1].y, rectWdith, 1), color);
+				var rectWdith : Number = branchWidth / ps.particles[l].extra.level;
+				if(ps.particles[l].extra.level == 1)rectWdith = 20;
+				canvasBmd.fillRect(new Rectangle(ps.particles[l].x - rectWdith / 2, ps.particles[l].y, rectWdith, 1), color);
 			}
 		}
 
 		private function run() : void
 		{
-			isCanClick=false;
+			isCanClick = false;
 			canvasBmd.clear();
-			var p : PhysicsParticle = new PhysicsParticle(null, stage.stageWidth/2, stage.stageHeight, 30, 1);
+			var p : PhysicsParticle = new PhysicsParticle(null, stage.stageWidth / 2, stage.stageHeight, 30, 1);
 			p.addEventListener("dead", deadHandler);
 			p.extra = {level:1};
 			p.v = new Vector2D(0, -4);
@@ -103,6 +109,7 @@ package advanced
 			p.startRendering();
 			ps.addParticle(p);
 		}
+
 		public function createParticle(x : Number,y : Number,v : Vector2D,parentLevel : int) : void
 		{
 			var theLevel : int = (parentLevel + 1);
@@ -110,7 +117,7 @@ package advanced
 			p.extra = {level:theLevel};
 			if(p.extra.level < level)
 			p.addEventListener("dead", deadHandler);
-			else isCanClick=true;
+			else isCanClick = true;
 			p.v = v.rotateNew(30 - Math.random() * 60);
 			p.f = new Vector2D(0, 0);
 			p.startRendering();

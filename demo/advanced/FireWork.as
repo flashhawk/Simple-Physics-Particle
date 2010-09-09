@@ -102,15 +102,17 @@ package  advanced
 		{
 			canvasBmd.clear();
 			particles=particleSystem.particles;
-			for(var i : int =particles.length;i > 0;i--)
+			var l:int=particles.length;
+			
+			while(l-- >0)
 			{
-				if(particles[i - 1].extra.isFire)
+				if(particles[l].extra.isFire)
 				{
-					canvasBmd.fillRect(new Rectangle(particles[i - 1].x, particles[i - 1].y, 4, 4), particles[i - 1].extra.color);
+					canvasBmd.fillRect(new Rectangle(particles[l].x, particles[l].y, 4, 4), particles[l].extra.color);
 				}
 				else
 				{
-					canvasBmd.fillRect(new Rectangle(particles[i - 1].x, particles[i - 1].y, 3, 3), particles[i - 1].extra.color);
+					canvasBmd.fillRect(new Rectangle(particles[l].x, particles[l].y, 3, 3), particles[l].extra.color);
 				}
 			}
 			blurBmd.draw(canvas, null, null, BlendMode.ADD);
@@ -143,7 +145,7 @@ package  advanced
 		private function boom(e : Event) : void
 		{
 			var fireNum : int = int(Math.random() * 200 + 100);
-			for(var i : int = fireNum;i > 0;i--)
+			while(fireNum-- >0)
 			{
 				var fireParticle : PhysicsParticle = new PhysicsParticle(null, e.target.position.x, e.target.position.y, 30, 2);
 				fireParticle.extra = {color:e.target.extra.color, isFire:false};
