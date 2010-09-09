@@ -11,6 +11,7 @@
  **/
 package cn.flashhawk.spp
 {
+	import cn.flashhawk.spp.events.ParticleEvent;
 	import cn.flashhawk.spp.geom.Vector2D;
 	import cn.flashhawk.spp.physics.Force;
 
@@ -81,7 +82,7 @@ package cn.flashhawk.spp
 				if (!_forces[i].live()) 
 				{
 					delete _forces[i];
-					dispatchEvent(new Event(i + "Dead"));
+					dispatchEvent(new Event(i + ParticleEvent.DEAD));
 				} 
 				else 
 				{
@@ -118,7 +119,7 @@ package cn.flashhawk.spp
 		 */
 		public function destory() : void
 		{
-			dispatchEvent(new Event("dead"));
+			//dispatchEvent(new Event(ParticleEvent.DEAD));
 			this._position = null;
 			this._v = null;
 			this._a = null;
@@ -176,6 +177,7 @@ package cn.flashhawk.spp
 			}
 			else
 			{
+				dispatchEvent(new Event(ParticleEvent.DEAD));
 				destory();
 			}
 		}
