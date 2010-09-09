@@ -1,5 +1,6 @@
 package based
 {
+	import cn.flashhawk.spp.events.ParticleEvent;
 	import flash.display.BlendMode;
 	import cn.flashhawk.spp.PhysicsParticle;
 	import cn.flashhawk.spp.geom.Vector2D;
@@ -39,7 +40,7 @@ package based
 				fireParticle.v = new Vector2D(0, Math.random()*5);
 				fireParticle.v.rotate(Math.random() * 360);
 				fireParticle.f = new Vector2D(0.05, 0.05);
-				fireParticle.addEventListener("dead", destorySelf);
+				fireParticle.addEventListener(ParticleEvent.DEAD, destorySelf);
 				fireParticle.addForce("brow", brownForce);
 				this.addChild(target);
 				TweenLite.to(target, 1, {alpha:0, delay:1});

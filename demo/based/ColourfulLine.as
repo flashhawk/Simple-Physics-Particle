@@ -4,11 +4,9 @@ package based
 	import cn.flashhawk.spp.PhysicsParticle;
 	import cn.flashhawk.spp.physics.Force;
 	import cn.flashhawk.spp.physics.forces.BrownForce;
-	import cn.flashhawk.spp.util.FPS;
 
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
-	import flash.display.StageQuality;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -17,22 +15,24 @@ package based
 	/**
 	 * @author flashhawk
 	 */
-	 [SWF(backgroundColor="#000000", frameRate="30", width="800", height="600")]
+	[SWF(backgroundColor="#000000", frameRate="30", width="800", height="600")]
+
 	public class ColourfulLine extends Sprite 
 	{
-		public var particleSystem:ParticlesSystem;
-		public var canvas:Sprite;
-		public var gravity:Force=new Force(0,0.5);
+		public var particleSystem : ParticlesSystem;
+		public var canvas : Sprite;
+		public var gravity : Force = new Force(0, 0.5);
+
 		public function ColourfulLine()
 		{
-			particleSystem=new ParticlesSystem();
+			particleSystem = new ParticlesSystem();
 			this.addEventListener(Event.ADDED_TO_STAGE, init);
 		}
-		
-		private function init(e:Event):void
+
+		private function init(e : Event) : void
 		{
-			canvas=new Sprite();
-			canvas.graphics.lineStyle(1,0xffffff);
+			canvas = new Sprite();
+			canvas.graphics.lineStyle(1, 0xffffff);
 			
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
@@ -46,7 +46,7 @@ package based
 		private function onEnterFrame(event : Event) : void 
 		{
 			canvas.graphics.clear();
-			canvas.graphics.lineStyle(4,0xffffff);
+			canvas.graphics.lineStyle(4, 0xffffff);
 			var prevMid : Point = null;
 			for(var i : int = 1;i < particleSystem.particles.length;i++)
 			{
@@ -71,39 +71,15 @@ package based
 				}
 				prevMid = midPoint;
 			}
-			
-			//this.graphics.lineTo(pt2.x, pt2.y);
-			
 		}
 
 		private function createFlow(event : MouseEvent) : void 
 		{
-			var brownForce:BrownForce=new BrownForce(2,2);
-			var ball:Sprite=createBall(0xffffff,2);
-			//addChild(ball);
-			var p:PhysicsParticle=new PhysicsParticle(null, mouseX, mouseY,30,1);
-			//p.addEventListener("dead", destroyBall);
+			var brownForce : BrownForce = new BrownForce(2, 2);
+			var p : PhysicsParticle = new PhysicsParticle(null, mouseX, mouseY, 30, 1);
 			p.addForce("browForce", brownForce);
-			//p.addForce("gravity", gravity);
 			p.startRendering();
 			particleSystem.addParticle(p);
-		}
-		private function destroyBall(e:Event):void
-		{
-			var p:PhysicsParticle=PhysicsParticle(e.target);
-			var ball:Sprite=Sprite(p.target);
-			this.removeChild(ball);
-			p.removeEventListener("dead", destroyBall);
-			
-		}
-		private function createBall(color : uint,r : Number) : Sprite
-		{
-			var s : Sprite = new Sprite();
-			s.cacheAsBitmap = true;
-			s.graphics.beginFill(color);
-			s.graphics.drawCircle(0, 0, r);
-			s.graphics.endFill();
-			return s;
 		}
 	}
 }

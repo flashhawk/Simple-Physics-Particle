@@ -1,5 +1,6 @@
 package  advanced
 {
+	import cn.flashhawk.spp.events.ParticleEvent;
 	import cn.flashhawk.spp.ParticlesSystem;
 	import cn.flashhawk.spp.PhysicsParticle;
 	import cn.flashhawk.spp.geom.Vector2D;
@@ -126,16 +127,16 @@ package  advanced
 			particleSystem.addParticle(fireParticle);
 			fireParticle.v = new Vector2D(Math.random() * 4 - 2, -(5+Math.random()*3));
 			fireParticle.f = new Vector2D(0.001, 0.001);
-			fireParticle.addEventListener('dead', destory);
-			fireParticle.addEventListener('dead', boom);
+			fireParticle.addEventListener(ParticleEvent.DEAD, destory);
+			fireParticle.addEventListener(ParticleEvent.DEAD, boom);
 			fireParticle.startRendering();
 		}
 
 		private function destory(e : Event) : void 
 		{
 			var p : PhysicsParticle = PhysicsParticle(e.target);
-			p.removeEventListener("dead", destory);
-			p.removeEventListener("dead", boom);
+			p.removeEventListener(ParticleEvent.DEAD, destory);
+			p.removeEventListener(ParticleEvent.DEAD, boom);
 			p = null;
 		}
 

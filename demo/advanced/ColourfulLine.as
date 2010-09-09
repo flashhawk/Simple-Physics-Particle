@@ -3,7 +3,6 @@ package advanced
 	import cn.flashhawk.spp.ParticlesSystem;
 	import cn.flashhawk.spp.PhysicsParticle;
 	import cn.flashhawk.spp.physics.forces.BrownForce;
-	import cn.flashhawk.spp.util.FPS;
 
 	import flash.display.Bitmap;
 	import flash.display.BlendMode;
@@ -57,7 +56,6 @@ package advanced
 			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(Event.RESIZE, initBitmapCanvas);
 			initBitmapCanvas();
-			//this.addChild(lineCanvas);
 			//addChild(new FPS());
 		}
 
@@ -119,31 +117,10 @@ package advanced
 		private function createFlow(event : MouseEvent) : void 
 		{
 			var brownForce : BrownForce = new BrownForce(1, 0.1);
-			var ball : Sprite = createBall(0xffffff, 2);
-			//addChild(ball);
 			var p : PhysicsParticle = new PhysicsParticle(null, mouseX * 0.5, mouseY * 0.5, 30, 1);
-			//p.addEventListener("dead", destroyBall);
 			p.addForce("browForce", brownForce);
 			p.startRendering();
 			particleSystem.addParticle(p);
-		}
-
-		private function destroyBall(e : Event) : void
-		{
-			var p : PhysicsParticle = PhysicsParticle(e.target);
-			var ball : Sprite = Sprite(p.target);
-			this.removeChild(ball);
-			p.removeEventListener("dead", destroyBall);
-		}
-
-		private function createBall(color : uint,r : Number) : Sprite
-		{
-			var s : Sprite = new Sprite();
-			s.cacheAsBitmap = true;
-			s.graphics.beginFill(color);
-			s.graphics.drawCircle(0, 0, r);
-			s.graphics.endFill();
-			return s;
 		}
 	}
 }
