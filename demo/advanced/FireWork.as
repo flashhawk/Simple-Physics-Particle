@@ -41,6 +41,7 @@ package  advanced
 		
 		private var logo:Logo;
 	
+		private var l:int;
 		public function FireWork()
 		{
 			setStage();
@@ -102,7 +103,8 @@ package  advanced
 		{
 			canvasBmd.clear();
 			particles=particleSystem.particles;
-			var l:int=particles.length;
+			
+			l=particles.length;
 			
 			while(l-- >0)
 			{
@@ -121,7 +123,6 @@ package  advanced
 			postBmd.draw(blurBmp, matrix);
 			
 		}
-
 		private function fire(e : MouseEvent) : void
 		{
 			var fireParticle :PhysicsParticle= new PhysicsParticle(null, canvasBmd.width / 2, canvasBmd.height, 30, 1.5);

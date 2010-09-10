@@ -39,6 +39,8 @@ package advanced
 		private var bi : Number = 0.025;
 
 		private var isCanClick : Boolean = false;
+		
+		private var l:int;
 
 		public function Tree()
 		{
@@ -88,7 +90,7 @@ package advanced
 		{
 			//canvasBmd.colorMod(-1, -1, -1,0);
 			var color : uint = (Math.sin(r += ri) * 128 + 127) << 16 | (Math.sin(g += gi) * 128 + 127) << 8 | (Math.sin(b += bi) * 128 + 127) ;
-			var l : int = ps.particles.length;
+			l = ps.particles.length;
 			while(l-- > 0)
 			{
 				var rectWdith : Number = branchWidth / ps.particles[l].extra.level;
