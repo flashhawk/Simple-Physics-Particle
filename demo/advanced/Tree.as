@@ -67,7 +67,8 @@ package advanced
 			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(MouseEvent.CLICK, function(e : MouseEvent):void
 			{
-				if(isCanClick) run();
+				//if(isCanClick) run();
+				initCanvas();
 			});
 			stage.addEventListener(Event.RESIZE, initCanvas);
 			initCanvas();
@@ -119,7 +120,7 @@ package advanced
 			p.extra = {level:theLevel};
 			if(p.extra.level < level)
 			p.addEventListener("dead", deadHandler);
-			else isCanClick = true;
+			//else isCanClick = true;
 			p.v = v.rotateNew(30 - Math.random() * 60);
 			p.f = new Vector2D(0, 0);
 			p.startRendering();
