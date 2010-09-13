@@ -57,8 +57,7 @@ package  advanced
 			initCanvas();
 			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(Event.RESIZE, initCanvas);
-			var id2:Number=setInterval(boom, 20);
-			var id2:Number=setInterval(boom, 10);
+			var id:Number=setInterval(boom, 10);
 			//addChild(new FPS());
 			
 		}
@@ -117,11 +116,12 @@ package  advanced
 			particles = particleSystem.particles;
 			
 			//var color:uint=(Math.sin(r += ri) * 128 + 127) << 16  |  (Math.sin(g += gi) * 128 + 127) << 8  |  (Math.sin(b += bi) * 128 + 127) ;
-			var color:uint=16415262;
+			var color:uint=0xff6600;
 			
-			for(var i : int = particles.length;i > 0;i--)
+			var l:int=particles.length;
+			while(l-- >0)
 			{
-				canvasBmd.fillRect(new Rectangle(particles[i - 1].x, particles[i - 1].y, Math.random()*9, Math.random()*9), color);
+				canvasBmd.fillRect(new Rectangle(particles[l].x, particles[l].y, Math.random()*9, Math.random()*9), color);
 			}
 			blurBmd.draw(canvas, null, null, BlendMode.ADD);
 			blurBmd.blur(4, 4, 1);
@@ -132,8 +132,9 @@ package  advanced
 		}
 		private function boom(e:Event=null) : void
 		{
-			    var randomDis:Number=Math.random()*15-8;
-				var fireParticle :PhysicsParticle = new PhysicsParticle(null, mouseX * 0.5 + randomDis, mouseY*0.5-10,30,1);
+			    var x_d:Number=Math.random()*14-7;
+			    var y_d:Number=-Math.random()*5-10;
+				var fireParticle :PhysicsParticle = new PhysicsParticle(null, mouseX * 0.5 + x_d, mouseY*0.5+y_d,30,0.8);
 				fireParticle.f=new Vector2D(0.2,0.2);
 				var brownForce : BrownForce = new BrownForce(2,1);
 				 
