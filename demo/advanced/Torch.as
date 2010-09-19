@@ -1,7 +1,7 @@
 package  advanced
 {
-	import cn.flashhawk.spp.ParticlesSystem;
-	import cn.flashhawk.spp.PhysicsParticle;
+	
+	import cn.flashhawk.spp.particles.*;
 	import cn.flashhawk.spp.geom.Vector2D;
 	import cn.flashhawk.spp.physics.Force;
 	import cn.flashhawk.spp.physics.forces.BrownForce;
@@ -58,6 +58,7 @@ package  advanced
 			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(Event.RESIZE, initCanvas);
 			var id:Number=setInterval(boom, 10);
+			particleSystem.startRendering();
 			//addChild(new FPS());
 			
 		}
@@ -134,7 +135,7 @@ package  advanced
 		{
 			    var x_d:Number=Math.random()*14-7;
 			    var y_d:Number=-Math.random()*5-10;
-				var fireParticle :PhysicsParticle = new PhysicsParticle(null, mouseX * 0.5 + x_d, mouseY*0.5+y_d,30,0.8);
+				var fireParticle :Particle = new Particle(mouseX * 0.5 + x_d, mouseY*0.5+y_d,0.8*30);
 				fireParticle.f=new Vector2D(0.2,0.2);
 				var brownForce : BrownForce = new BrownForce(2,1);
 				 
@@ -142,7 +143,7 @@ package  advanced
 				fireParticle.addForce("brownForce", brownForce);
 				fireParticle.addForce("upForce", upForce);
 				particleSystem.addParticle(fireParticle);
-				fireParticle.startRendering();
+
 			}
 		}
 	

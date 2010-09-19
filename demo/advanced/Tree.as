@@ -2,8 +2,7 @@ package advanced
 {
 	import flash.display.StageDisplayState;
 
-	import cn.flashhawk.spp.ParticlesSystem;
-	import cn.flashhawk.spp.PhysicsParticle;
+	import cn.flashhawk.spp.particles.*;
 	import cn.flashhawk.spp.geom.Vector2D;
 
 	import flash.display.Bitmap;
@@ -72,6 +71,7 @@ package advanced
 			});
 			stage.addEventListener(Event.RESIZE, initCanvas);
 			initCanvas();
+			ps.startRendering();
 		}
 
 		private function initCanvas(e : Event = null) : void
@@ -104,32 +104,30 @@ package advanced
 		{
 			isCanClick = false;
 			canvasBmd.clear();
-			var p : PhysicsParticle = new PhysicsParticle(null, stage.stageWidth / 2, stage.stageHeight, 30, 1);
+			var p :Particle = new Particle(stage.stageWidth / 2, stage.stageHeight, 1*30);
 			p.addEventListener("dead", deadHandler);
 			p.extra = {level:1};
 			p.v = new Vector2D(0, -4);
 			p.f = new Vector2D(0, 0);
-			p.startRendering();
 			ps.addParticle(p);
 		}
 
 		public function createParticle(x : Number,y : Number,v : Vector2D,parentLevel : int) : void
 		{
 			var theLevel : int = (parentLevel + 1);
-			var p : PhysicsParticle = new PhysicsParticle(null, x, y, 30, 0.5);
+			var p : Particle = new Particle(x, y, 0.5*30);
 			p.extra = {level:theLevel};
 			if(p.extra.level < level)
 			p.addEventListener("dead", deadHandler);
 			//else isCanClick = true;
 			p.v = v.rotateNew(30 - Math.random() * 60);
 			p.f = new Vector2D(0, 0);
-			p.startRendering();
 			ps.addParticle(p);
 		}
 
 		private function deadHandler(e : Event) : void
 		{
-			var particle : PhysicsParticle = PhysicsParticle(e.target);
+			var particle : Particle = Particle(e.target);
 			for(var i : int = 0;i < branchCount;i++)
 			{
 				createParticle(particle.x, particle.y, particle.v, particle.extra.level);

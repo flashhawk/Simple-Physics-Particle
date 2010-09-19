@@ -1,7 +1,6 @@
 package advanced 
 {
-	import cn.flashhawk.spp.ParticlesSystem;
-	import cn.flashhawk.spp.PhysicsParticle;
+	import cn.flashhawk.spp.particles.*;
 	import cn.flashhawk.spp.physics.forces.BrownForce;
 
 	import flash.display.Bitmap;
@@ -40,6 +39,7 @@ package advanced
 		public function ColourfulLine()
 		{
 			particleSystem = new ParticlesSystem();
+			
 			matrix.scale(0.1, 0.1);
 			this.addEventListener(Event.ADDED_TO_STAGE, init);
 		}
@@ -56,6 +56,7 @@ package advanced
 			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(Event.RESIZE, initBitmapCanvas);
 			initBitmapCanvas();
+			particleSystem.startRendering();
 			//addChild(new FPS());
 		}
 
@@ -88,7 +89,7 @@ package advanced
 			var prevMid : Point = null;
 			for(var i : int = 1;i < particleSystem.particles.length;i++)
 			{
-				trace(particleSystem.particles.length);
+				//trace(particleSystem.particles.length);
 				var pt1 : Object = {};
 				var pt2 : Object = {};
 				pt1.x = particleSystem.particles[i - 1].x;
@@ -117,9 +118,8 @@ package advanced
 		private function createFlow(event : MouseEvent) : void 
 		{
 			var brownForce : BrownForce = new BrownForce(1, 0.1);
-			var p : PhysicsParticle = new PhysicsParticle(null, mouseX * 0.5, mouseY * 0.5, 30, 1);
+			var p : Particle = new Particle(mouseX * 0.5, mouseY * 0.5, 1*30);
 			p.addForce("browForce", brownForce);
-			p.startRendering();
 			particleSystem.addParticle(p);
 		}
 	}

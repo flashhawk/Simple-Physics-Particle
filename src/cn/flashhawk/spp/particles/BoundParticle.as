@@ -1,13 +1,12 @@
-﻿package cn.flashhawk.spp 
+﻿package cn.flashhawk.spp.particles 
 {
-	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
 
 	/**
 	 * 有矩形边界的粒子,这些粒子被约束在一个矩形里面
 	 * @author FLASHHAWK
 	 */
-	public class BoundParticle extends PhysicsParticle
+	public class BoundParticle extends Particle
 	{
 		private var _particleBound : Rectangle;
 		private var _top : Number;
@@ -26,10 +25,9 @@
 		 * @param	y
 		 * @param	bound  边界
 		 */
-		public function BoundParticle(target : DisplayObject,x : Number,y : Number,bound : Rectangle,framerate : Number = 30,life : Number = Infinity) 
+		public function BoundParticle(x : Number,y : Number,bound : Rectangle,life : Number = Infinity) 
 		{
-			super(target, x, y, framerate, life);
-			this.particleBound = bound;
+			
 		}
 
 		/**

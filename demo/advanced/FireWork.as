@@ -1,9 +1,9 @@
 package  advanced
 {
 	import cn.flashhawk.spp.events.ParticleEvent;
-	import cn.flashhawk.spp.ParticlesSystem;
-	import cn.flashhawk.spp.PhysicsParticle;
 	import cn.flashhawk.spp.geom.Vector2D;
+	import cn.flashhawk.spp.particles.Particle;
+	import cn.flashhawk.spp.particles.ParticlesSystem;
 	import cn.flashhawk.spp.physics.Force;
 	import cn.flashhawk.spp.util.FPS;
 
@@ -11,9 +11,11 @@ package  advanced
 	import flash.display.BlendMode;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
+	import flash.display.StageDisplayState;
 	import flash.display.StageQuality;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
@@ -37,11 +39,14 @@ package  advanced
 		private var particles : Array = [];
 
 		private var matrix : Matrix;
-		private var particleSystem:ParticlesSystem=new ParticlesSystem();
-		
-		private var logo:Logo;
-	
-		private var l:int;
+		private var particleSystem : ParticlesSystem = new ParticlesSystem();
+
+		private var logo : Logo;
+
+		private var l : int;
+		private var frameRate : int = 30;
+		private var v_array = [10,13,16];
+
 		public function FireWork()
 		{
 			setStage();
@@ -49,6 +54,7 @@ package  advanced
 			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(Event.RESIZE, initCanvas);
 			addChild(new FPS());
+			particleSystem.startRendering();
 		}
 
 		private function setStage() : void
@@ -57,6 +63,13 @@ package  advanced
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
 			stage.addEventListener(MouseEvent.CLICK, fire);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+		}
+
+		private function keyDownHandler(event : KeyboardEvent) : void 
+		{
+			if(event.keyCode == 70)
+			stage.displayState = StageDisplayState.FULL_SCREEN;
 		}
 
 		private function initCanvas(e : Event = null) : void
@@ -89,24 +102,24 @@ package  advanced
 			
 			matrix = new Matrix();
 			matrix.scale(0.1, 0.1);
-			if(logo==null)
+			if(logo == null)
 			{
-				logo=new Logo();
-				logo.blendMode=BlendMode.OVERLAY;
+				logo = new Logo();
+				logo.blendMode = BlendMode.OVERLAY;
 				addChildAt(logo, 3);
 			}
-			logo.x=stage.stageWidth/2;
-			logo.y=stage.stageHeight/2;
+			logo.x = stage.stageWidth / 2;
+			logo.y = stage.stageHeight / 2;
 		}
 
 		private function onEnterFrame(event : Event) : void 
 		{
 			canvasBmd.clear();
-			particles=particleSystem.particles;
+			particles = particleSystem.particles;
+			l = particles.length;
 			
-			l=particles.length;
 			
-			while(l-- >0)
+			while(l-- > 0)
 			{
 				if(particles[l].extra.isFire)
 				{
@@ -117,47 +130,43 @@ package  advanced
 					canvasBmd.fillRect(new Rectangle(particles[l].x, particles[l].y, 3, 3), particles[l].extra.color);
 				}
 			}
+		
 			blurBmd.draw(canvas, null, null, BlendMode.ADD);
 			blurBmd.blur(2, 2, 1);
 			blurBmd.colorMod(-5, -5, -5, 0);
 			postBmd.draw(blurBmp, matrix);
-			
 		}
+
 		private function fire(e : MouseEvent) : void
 		{
-			var fireParticle :PhysicsParticle= new PhysicsParticle(null, canvasBmd.width / 2, canvasBmd.height, 30, 1.5);
+			
+			var fireParticle : Particle = particleSystem.createParticle(canvasBmd.width / 2, canvasBmd.height, 1.5 * frameRate);
 			fireParticle.extra = {color:Math.random() * 0xffffff, isFire:true};
-			particleSystem.addParticle(fireParticle);
-			fireParticle.v = new Vector2D(Math.random() * 4 - 2, -(5+Math.random()*3));
+			fireParticle.v = new Vector2D(Math.random() * 4 - 2, -(5 + Math.random() * 3));
 			fireParticle.f = new Vector2D(0.001, 0.001);
 			fireParticle.addEventListener(ParticleEvent.DEAD, destory);
 			fireParticle.addEventListener(ParticleEvent.DEAD, boom);
-			fireParticle.startRendering();
+			trace(particleSystem.particlePool.array.length);
 		}
 
 		private function destory(e : Event) : void 
 		{
-			var p : PhysicsParticle = PhysicsParticle(e.target);
+			var p : Particle = Particle(e.target);
 			p.removeEventListener(ParticleEvent.DEAD, destory);
 			p.removeEventListener(ParticleEvent.DEAD, boom);
-			p = null;
 		}
 
 		private function boom(e : Event) : void
 		{
 			var fireNum : int = int(Math.random() * 200 + 100);
-			while(fireNum-- >0)
+			while(fireNum-- > 0)
 			{
-				var fireParticle : PhysicsParticle = new PhysicsParticle(null, e.target.position.x, e.target.position.y, 30, 2);
+				var fireParticle : Particle = particleSystem.createParticle(e.target.position.x, e.target.position.y, 2 * frameRate);
 				fireParticle.extra = {color:e.target.extra.color, isFire:false};
-				
 				fireParticle.v = new Vector2D(0, 1 + Math.random() * 16);
 				fireParticle.v.rotate(Math.random() * 360);
 				fireParticle.f = new Vector2D(0.1, 0.1);
 				fireParticle.addForce("g", gravity);
-				particleSystem.addParticle(fireParticle);
-				fireParticle.addEventListener("dead", destory);
-				fireParticle.startRendering();
 			}
 			fireNum = NaN;
 		}
