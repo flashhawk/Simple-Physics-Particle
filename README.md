@@ -1,3 +1,5 @@
-Simple Physics Particle 2.0
+Simple Physics Particle 
 =============
-coming soon...
+1.0 Suspended Download
+
+2.0 coming soon...
