@@ -3,6 +3,11 @@
 Simple Physics Particle engine is a simple to use AS3 particle system, suitable for beginners, very easy to use. Currently only supports 2D.
 
 http://www.flashquake.cn/opensource/spp/en
+
+by flashhawk
+Blog :http://www.flashquake.cn
+email:flashhawkmx@gmail.com
+
 ===Feature
 
 * Code less, simple structure.
