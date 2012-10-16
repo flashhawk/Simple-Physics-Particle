@@ -10,7 +10,6 @@ package cn.flashhawk.spp.physics.forces
 	{
 		public function Gravity(value:Number)
 		{
-			isHasTarget=false;
 			super(0, value, Infinity);
 		}
 	}

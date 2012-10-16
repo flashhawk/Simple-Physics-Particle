@@ -38,7 +38,7 @@ package
 		private var particles : Array = [];
 
 		private var matrix : Matrix;
-		private var particleSystem : ParticlesSystem = new ParticlesSystem(Particle);
+		private var particleSystem : ParticlesSystem;
 		public var sttractionPoint : Point = new Point();
 
 		[Embed(source="assets/logo.png")]
@@ -55,11 +55,11 @@ package
 		private function init(e:Event):void
 		{
 			setStage();
+			particleSystem=new ParticlesSystem(stage,null,loop);
 			initCanvas();
 			var id : Number = setInterval(boom, 0);
 			particleSystem.startRendering();
 			addChild(new FPS());
-			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		private function setStage() : void
 		{
@@ -112,14 +112,14 @@ package
 			logo.y = (stage.stageHeight - logo.height) / 2;
 		}
 
-		private function onEnterFrame(event : Event) : void 
+		private function loop() : void 
 		{
 			canvasBmd.clear();
 			particles = particleSystem.particles;
 			var l : int = particles.length;
 			while(l-- > 0)
 			{
-				canvasBmd.fillRect(new Rectangle(particles[l].x, particles[l].y, Math.random() * 5 + 3, Math.random() * 5 + 3), fireColor);
+				canvasBmd.fillRect(new Rectangle(particles[l].position.x, particles[l].position.y, Math.random() * 5 + 3, Math.random() * 5 + 3), fireColor);
 			}
 			blurBmd.draw(canvas, null, null, BlendMode.ADD);
 			blurBmd.filter = blurFilter;
@@ -131,9 +131,9 @@ package
 		{
 			var x_d : Number = (0.5 - Math.random()) * 15;
 			var y_d : Number = -Math.random() * 5 - 10;
-			var fireParticle : Particle = particleSystem.createParticle();
-			fireParticle.init(mouseX * 0.5 + x_d, mouseY * 0.5 + y_d, 1*stage.frameRate);
-			fireParticle.f.reset(0.2, 0.2);
+			var fireParticle : Particle = particleSystem.createParticle(Particle);
+			fireParticle.init(mouseX * 0.5 + x_d, mouseY * 0.5 + y_d, 1);
+			fireParticle.friction.reset(0.2, 0.2);
 			
 			var upForce : Force = new Force(0, -1);
 			 var brownForce:SimpleBrownian = new SimpleBrownian(1.5);

@@ -27,7 +27,7 @@ package
 	{
 		public var sttractionPoint : Point;
 		private var ps : ParticlesSystem;
-		private var bound : Rectangle;
+		private var boundary : Rectangle;
 		private var canvase : Bitmap;
 		private var bmd : CanvasBMD;
 		private var isBrown : Boolean = false;
@@ -40,12 +40,12 @@ package
 		private function init(e : Event) : void
 		{
 			stageSetup();
-			ps = new ParticlesSystem(BoundParticle);
+			boundary=new Rectangle(0,0,stage.stageWidth*scale,stage.stageHeight*scale);
+			ps = new ParticlesSystem(stage,null,loop);
 			sttractionPoint = new Point();
 			boom(10000);
 			resizeHandler(null);
 			ps.startRendering();
-			this.addEventListener(Event.ENTER_FRAME, loop);
 			addChild(new FPS());
 		}
 
@@ -73,13 +73,8 @@ package
 			canvase.height = stage.stageHeight;
 			addChild(canvase);
 
-			var i : int;
-			i = ps.particles.length;
-			bound = new Rectangle(0, 0, stage.stageWidth * scale, stage.stageHeight * scale);
-			while (i-- > 0)
-			{
-				ps.particles[i].particleBound = bound;
-			}
+			boundary.width=stage.stageWidth*scale;
+			boundary.height=stage.stageHeight*scale;
 		}
 
 		private function mouseHandler(event : MouseEvent) : void
@@ -128,14 +123,14 @@ package
 			}
 		}
 
-		private function loop(e : Event) : void
+		private function loop() : void
 		{
 			var i : int = ps.particles.length;
 			bmd.lock();
 			bmd.clear();
 			while (i-- > 0)
 			{
-				bmd.setPixel(ps.particles[i].x, ps.particles[i].y, 0xffffff);
+				bmd.setPixel(ps.particles[i].position.x, ps.particles[i].position.y, 0xffffff);
 			}
 			sttractionPoint.x = mouseX * scale;
 			sttractionPoint.y = mouseY * scale;
@@ -147,12 +142,11 @@ package
 
 		public function boom(count : int = 30) : void
 		{
-			bound = new Rectangle(0, 0, stage.stageWidth * scale, stage.stageHeight * scale);
 			for (var i : int = 0;i < count;i++)
 			{
-				var fireParticle : BoundParticle = BoundParticle(ps.createParticle());
+				var fireParticle : Particle = ps.createParticle(Particle);
 				fireParticle.bounceIntensity = 2;
-				fireParticle.particleBound = bound;
+				fireParticle.boundary = boundary;
 				var repulsionForce : Repulsion = new Repulsion(sttractionPoint, 8, 100);
 				fireParticle.addForce("repulsionForce", repulsionForce);
 				fireParticle.init(stage.stageWidth * Math.random()*scale, stage.stageHeight * Math.random()*scale);

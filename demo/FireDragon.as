@@ -43,7 +43,7 @@ package
 		private var postBmd : BitmapData;
 		private var postCanvas : Bitmap;
 		private var matrix : Matrix;
-		private var ps : ParticlesSystem = new ParticlesSystem(Particle);
+		private var ps : ParticlesSystem;
 		public var sttractionPoint : Point = new Point();
 
 		[Embed(source="assets/logo.png")]
@@ -61,9 +61,10 @@ package
 		{
 			setStage();
 			initCanvas();
+			
+			ps=new ParticlesSystem(stage,null,loop);
 			boom();
 			ps.startRendering();
-			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(Event.RESIZE, initCanvas);
 		}
 		private function setStage() : void
@@ -117,7 +118,7 @@ package
 			logo.y = (stage.stageHeight - logo.height) / 2;
 		}
 
-		private function onEnterFrame(event : Event) : void 
+		private function loop() : void 
 		{
 			canvasBmd.lock();
 			canvasBmd.clear();
@@ -125,7 +126,7 @@ package
 			l = ps.particles.length;
 			while (l-- > 0)
 			{
-				canvasBmd.fillRect(new Rectangle(ps.particles[l].x, ps.particles[l].y, 3, 3), color);
+				canvasBmd.fillRect(new Rectangle(ps.particles[l].position.x, ps.particles[l].position.y, 3, 3), color);
 			}
 			blurBmd.draw(canvas, null, null, BlendMode.ADD);
 			blurBmd.filter = blurFilter;
@@ -141,7 +142,7 @@ package
 		{
 			for(var i : int = 300;i > 0;i--)
 			{
-				var fireParticle : Particle = ps.createParticle();
+				var fireParticle : Particle = ps.createParticle(Particle);
 				fireParticle.init(canvasBmd.width / 2, canvasBmd.height / 2);
 				var brownForce : Brownian = new Brownian(1.5,0.01);
 				fireParticle.addForce("brownForce", brownForce);

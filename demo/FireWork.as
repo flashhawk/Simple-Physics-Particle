@@ -36,7 +36,7 @@ package
 		private var postBmd : CanvasBMD;
 		private var postCanvas : Bitmap;
 		private var matrix : Matrix = new Matrix();
-		private var ps : ParticlesSystem = new ParticlesSystem(Particle);
+		private var ps : ParticlesSystem;
 
 		[Embed(source="assets/logo.png")]
 		public var  LogoPic : Class;
@@ -54,10 +54,10 @@ package
 		{
 			matrix.scale(0.1, 0.1);
 			setStage();
+			ps=new ParticlesSystem(stage,null,loop);
 			initCanvas();
 			addChild(new FPS());
 			ps.startRendering();
-			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 
 		private function setStage() : void
@@ -114,20 +114,21 @@ package
 			logo.y = (stage.stageHeight - logo.height) / 2;
 		}
 
-		private function onEnterFrame(event : Event) : void
+		private function loop() : void
 		{
 			canvasBmd.clear();
 			l = ps.particles.length;
 
 			while (l-- > 0)
 			{
+				var p=ps.particles[l];
 				if (ps.particles[l].extra.isFire)
 				{
-					canvasBmd.fillRect(new Rectangle(ps.particles[l].x, ps.particles[l].y, 4, 4), ps.particles[l].extra.color);
+					canvasBmd.fillRect(new Rectangle(p.position.x, p.position.y, 4, 4), p.extra.color);
 				}
 				else
 				{
-					canvasBmd.fillRect(new Rectangle(ps.particles[l].x, ps.particles[l].y, 3, 3), ps.particles[l].extra.color);
+					canvasBmd.fillRect(new Rectangle(p.position.x, p.position.y, 3, 3), ps.particles[l].extra.color);
 				}
 			}
 
@@ -139,37 +140,33 @@ package
 
 		private function fire(e : MouseEvent) : void
 		{
-			var fireParticle : Particle = ps.createParticle();
-			fireParticle.init(canvasBmd.width / 2, canvasBmd.height, 1.5 * stage.frameRate);
+			var fireParticle : Particle = ps.createParticle(Particle);
+			fireParticle.init(canvasBmd.width / 2, canvasBmd.height, 2.6);
 			fireParticle.extra = {color:Math.random() * 0xffffff, isFire:true};
-			fireParticle.v.reset(0, -(5 + Math.random() * 3));
-			fireParticle.v.rotate(15 - Math.random() * 30);
-			fireParticle.f.reset(0.001, 0.001);
-			fireParticle.addEventListener(ParticleEvent.DEAD, destory);
+			fireParticle.velocity.reset(0, -(6.5 + Math.random() * 4));
+			fireParticle.velocity.rotate(15 - Math.random() * 30);
+			fireParticle.friction.reset(0, 0);
+			fireParticle.addForce("g", gravity);
 			fireParticle.addEventListener(ParticleEvent.DEAD, boom);
-		}
-
-		private function destory(e : Event) : void
-		{
-			var p : Particle = Particle(e.target);
-			p.removeEventListener(ParticleEvent.DEAD, destory);
-			p.removeEventListener(ParticleEvent.DEAD, boom);
 		}
 
 		private function boom(e : Event) : void
 		{
-			var fireNum : int = int(Math.random() * 200 + 100);
+			
+			Particle(e.target).removeEventListener(ParticleEvent.DEAD, boom);
+			var fireNum : int = int(Math.random() * 100 + 200);
 			while (fireNum-- > 0)
 			{
-				var fireParticle : Particle = ps.createParticle();
-				fireParticle.init(e.target.position.x, e.target.position.y, 2 * stage.frameRate);
-				fireParticle.extra = {color:e.target.extra.color, isFire:false};
-				fireParticle.v.reset(0, 1 + Math.random() * 16);
-				fireParticle.v.rotate(Math.random() * 360);
-				fireParticle.f.reset(0.1, 0.1);
+				var fireParticle : Particle = ps.createParticle(Particle);
+				fireParticle.init(e.target.position.x, e.target.position.y, 1.5);
+				fireParticle.extra = {color:e.target.extra.color, isFire:false,size:0.5};
+				fireParticle.velocity.reset(0, 8+Math.random()*8);
+				fireParticle.velocity.rotate(Math.random() * 360);
+				fireParticle.friction.reset(0.1, 0.1);
 				fireParticle.addForce("g", gravity);
 			}
 			fireNum = NaN;
 		}
+		
 	}
 }

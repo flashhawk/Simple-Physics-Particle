@@ -1,11 +1,14 @@
 ﻿package cn.flashhawk.spp.particles
 {
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
+
+	import cn.flashhawk.spp.Spp;
 	import cn.flashhawk.spp.util.MathUtil;
 	import cn.flashhawk.spp.events.ParticleEvent;
 	import cn.flashhawk.spp.geom.Vector2D;
 	import cn.flashhawk.spp.physics.Force;
 
-	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 
@@ -14,19 +17,25 @@
 	 */
 	public class Particle extends EventDispatcher
 	{
-		private var _position : Vector2D = new Vector2D();
-		private var _v : Vector2D = new Vector2D();
-		private var _a : Vector2D = new Vector2D();
-		private var _f : Vector2D = new Vector2D(0.1, 0.1) ;
+		public var position : Vector2D = new Vector2D();
+		public var point:Point=new Point();
+		public var velocity : Vector2D = new Vector2D();
+		public var acceleration : Vector2D = new Vector2D();
+		public var friction : Vector2D = new Vector2D(0.1, 0.1) ;
 		private var _life : Number;
 		private var _forces : Object = {};
-		private var _target : DisplayObject;
 		private var sumForce : Vector2D = new Vector2D();
-		/**
-		 * 是否渲染 target的rotation属性.
+		/*
+		 * 碰到边界
 		 */
-		public  var isRenderTargetDir : Boolean;
-		/**
+		public var boundary : Rectangle=null;
+		/*
+		 * 碰到边界时候的反弹强度系数,默认是2
+		 */
+		public var bounceIntensity : Number = 2;
+		// TODO
+		// private var _bounds:Rectangle;
+		/*
 		 * 用来保存一些自定义的一些属性
 		 */
 		public 	var extra : Object = {};
@@ -44,30 +53,30 @@
 
 		public function init(x : Number, y : Number, life : Number = Infinity) : void
 		{
-			this._position.reset(x, y);
+			this.position.reset(x, y);
+			this.point.x=x;
+			this.point.y=y;
+			this.velocity.reset(0, 0);
+			this.acceleration.reset(0, 0);
+			this.friction.reset(0.1, 0.1);
 			this._life = life;
-			this._v.reset(0, 0);
-			this._a.reset(0, 0);
-			this._f.reset(0.1, 0.1);
 		}
 
 		public function reset() : void
 		{
 			this._forces = {};
 			this.extra = {};
-			_target = null;
 		}
 
 		public function destory() : void
 		{
-			_position = null;
-			_v = null;
-			_a = null;
-			_f = null;
+			position = null;
+			velocity = null;
+			acceleration = null;
+			friction = null;
 			_forces = null;
 			extra = null;
 			_life = NaN;
-			_target = null;
 		}
 
 		/**
@@ -78,51 +87,57 @@
 			sumForce.reset(0, 0);
 			for (var i:String in _forces)
 			{
-				if (!_forces[i].live())
+				if (!_forces[i].isLive())
 				{
 					Force(_forces[i]).destory();
 					delete _forces[i];
-					dispatchEvent(new Event(i + ParticleEvent.DEAD));
 				}
 				else
 				{
 					sumForce.plus(_forces[i].value);
-					a.reset(sumForce.x, sumForce.y);
-				};
+					acceleration.reset(sumForce.x, sumForce.y);
+				}
+				;
 			}
-			v.plus(a);
-			v.x *= (1 - f.x);
-			v.y *= (1 - f.y);
-			position.plus(v);
-			if (target == null) return;
-			renderTarget();
+			velocity.plus(acceleration);
+			velocity.x *= (1 - friction.x);
+			velocity.y *= (1 - friction.y);
+			position.plus(velocity);
+			point.x=position.x;
+			point.y=position.y;
+			if(boundary)bounce();
 		}
 
-		public function live() : Boolean
+		public function isLive() : Boolean
 		{
-			if (_life-- <= 0) return false;
+			if ((_life -= 1 / Spp.FPS) <= 0) return false;
 			return true;
-		}
-
-		/**
-		 * @private
-		 */
-		protected function renderTarget() : void
-		{
-			this._target.x = _position.x;
-			this._target.y = _position.y;
-			if (!isRenderTargetDir) return;
-			this._target.rotation = dir;
 		}
 
 		public function update() : void
 		{
-			if (live())
+			if (isLive())
 			{
 				move();
 				return;
 			}
 			dispatchEvent(new Event(ParticleEvent.DEAD));
+		}
+
+		private function bounce() : void
+		{
+			if (position.x < boundary.left || position.x > boundary.right)
+			{
+				position.x = position.x < boundary.left ? boundary.left : boundary.right;
+				velocity.scaleX(-bounceIntensity);
+				acceleration.scale(0);
+			}
+			if (position.y < boundary.top || position.y > boundary.bottom)
+			{
+				position.y = position.y < boundary.top ? boundary.top : boundary.bottom;
+				velocity.scaleY(-bounceIntensity);
+				acceleration.scale(0);
+			}
 		}
 
 		/**
@@ -140,9 +155,9 @@
 		 * @param id 力的ID
 		 * @param destory 移除此力的同时是否要销毁此力
 		 */
-		public function removeForce(id : String,destory : Boolean = false) : void
+		public function removeForce(id : String, destory : Boolean = false) : void
 		{
-			if(destory)Force(_forces[id]).destory();
+			if (destory) Force(_forces[id]).destory();
 			delete _forces[id];
 		}
 
@@ -156,117 +171,6 @@
 		}
 
 		/**
-		 * 返回粒子位置向量
-		 */
-		public function get position() : Vector2D
-		{
-			return _position;
-		}
-
-		/**
-		 * @private
-		 */
-		public function set position(pos : Vector2D) : void
-		{
-			_position.reset(pos.x, pos.y);
-		}
-
-		/**
-		 * 返回粒子或设置当前速度,
-		 */
-		public function get v() : Vector2D
-		{
-			return _v;
-		}
-
-		/**
-		 * @private
-		 */
-		public function set v(v : Vector2D) : void
-		{
-			_v .reset(v.x, v.y);
-		}
-
-		/**
-		 * 返回粒子或设置摩擦系数 范围0-1。
-		 */
-		public function get f() : Vector2D
-		{
-			return _f;
-		}
-
-		/**
-		 * @private
-		 */
-		public function set f(f : Vector2D) : void
-		{
-			_f.reset(f.x, f.y);
-		}
-
-		/**
-		 * 返回当前粒子当前加速度
-		 */
-		public function get a() : Vector2D
-		{
-			return _a;
-		}
-
-		/**
-		 * @private
-		 */
-		public function set a(a : Vector2D) : void
-		{
-			_a.reset(a.x, a.y);
-		}
-
-		/**
-		 * 返回或设置当前渲染的显示对象
-		 */
-		public function get target() : DisplayObject
-		{
-			return _target;
-		}
-
-		/**
-		 * @private
-		 */
-		public function set target(target : DisplayObject) : void
-		{
-			if (target != null)
-			{
-				this._target = target;
-				target.x = x;
-				target.y = y;
-			}
-		}
-
-		public function get x() : Number
-		{
-			return _position.x;
-		}
-
-		/**
-		 * @private
-		 */
-		public function set x(x : Number) : void
-		{
-			_position.x = x;
-		}
-
-		public function get y() : Number
-		{
-			return _position.y;
-		}
-
-		/**
-		 * @private
-		 */
-		public function set y(y : Number) : void
-		{
-			_position.x = y;
-		}
-
-		/**
 		 * 返回当前生命值
 		 */
 		public function get life() : Number
@@ -277,17 +181,17 @@
 		/**
 		 * @return 返回粒子的运动方向,以度为单位
 		 */
-		public function get dir() : Number
+		public function get moveDirection() : Number
 		{
-			return MathUtil.atan2D(_v.y, _v.x);
+			return MathUtil.atan2D(velocity.y, velocity.x);
 		}
 
 		/**
 		 * @return 返回粒子的运动方向,以弧度度为单位
 		 */
-		public function get dir_rad() : Number
+		public function get moveDirectionRad() : Number
 		{
-			return Math.atan2(_v.y, _v.x);
+			return Math.atan2(velocity.y, velocity.x);
 		}
 	}
 }

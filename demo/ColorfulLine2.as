@@ -1,7 +1,12 @@
 package 
 {
+	import cn.flashhawk.spp.Spp;
+	import cn.flashhawk.spp.physics.forces.Gravity;
+	import cn.flashhawk.spp.physics.Force;
+	import cn.flashhawk.spp.physics.forces.Brownian;
 	import cn.flashhawk.spp.canvas.CanvasBMD;
 	import cn.flashhawk.spp.particles.*;
+	import cn.flashhawk.spp.physics.forces.Attraction;
 	import cn.flashhawk.spp.physics.forces.SimpleBrownian;
 	import cn.flashhawk.spp.util.FPS;
 
@@ -21,9 +26,9 @@ package
 	 * @author flashhawk
 	 */
 	[SWF(backgroundColor="#000000", frameRate="30", width="800", height="600")]
-	public class ColourfulLine extends Sprite
+	public class ColorfulLine2 extends Sprite
 	{
-		public var particleSystem : ParticlesSystem=new ParticlesSystem(Particle);
+		public var particleSystem : ParticlesSystem;
 		public var lineCanvas : Sprite;
 		private var blurBmd:CanvasBMD;
 		private var blurBmp : Bitmap;
@@ -39,8 +44,15 @@ package
 		public var logo:Bitmap;
 		private var blurFilter:BlurFilter=new BlurFilter(2,2,1);
 		
+		private var lastMouseX:Number=0;
+		private var lastMouseY:Number=0;
+		
+		
+		private var lastParticle:Particle;
+		
+		private var floatForce:Gravity=new Gravity(-0.3);
 	
-		public function ColourfulLine()
+		public function ColorfulLine2()
 		{
 			this.addEventListener(Event.ADDED_TO_STAGE, init);
 		}
@@ -50,8 +62,9 @@ package
 			setStage();
 			lineCanvas = new Sprite();
 			initBitmapCanvas();
+			Spp.FPS=60;
+			particleSystem=new ParticlesSystem(this.stage,null,loop);
 			particleSystem.startRendering();
-			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			addChild(new FPS());
 		}
 		private function setStage() : void
@@ -87,20 +100,22 @@ package
 			logo.y = (stage.stageHeight-logo.height)/2;
 		}
 
-		private function onEnterFrame(event : Event) : void
+		private function loop() : void
 		{
 			var color : uint = (Math.sin(r += ri) * 128 + 127) << 16 | (Math.sin(g += gi) * 128 + 127) << 8 | (Math.sin(b += bi) * 128 + 127) ;
 			lineCanvas.graphics.clear();
-			lineCanvas.graphics.lineStyle(2, color);
+			lineCanvas.graphics.lineStyle(1, color);
 			var prevMid : Point = null;
-			for (var i : int = 1;i < particleSystem.particles.length;i++)
+			
+			var i:int = particleSystem.particles.length;
+			while (i-- > 1)
 			{
 				var pt1 : Object = {};
 				var pt2 : Object = {};
-				pt1.x = particleSystem.particles[i - 1].x;
-				pt1.y = particleSystem.particles[i - 1].y;
-				pt2.x = particleSystem.particles[i].x;
-				pt2.y = particleSystem.particles[i].y;
+				pt1.x = particleSystem.particles[i].position.x;
+				pt1.y = particleSystem.particles[i].position.y;
+				pt2.x = particleSystem.particles[i-1].position.x;
+				pt2.y = particleSystem.particles[i-1].position.y;
 				var midPoint : Point = new Point((pt1.x + pt2.x) / 2, (pt1.y + pt2.y) / 2);
 				if (prevMid)
 				{
@@ -113,6 +128,7 @@ package
 					lineCanvas.graphics.lineTo(midPoint.x, midPoint.y);
 				}
 				prevMid = midPoint;
+				trace(i);
 			}
 			blurBmd.draw(lineCanvas,null,null,BlendMode.ADD);
 			blurBmd.filter = blurFilter;
@@ -121,10 +137,23 @@ package
 
 		private function createFlow(e:Event) : void
 		{
-			var brownianForce :SimpleBrownian = new SimpleBrownian(1);
-			var p : Particle = particleSystem.createParticle();
-			p.init(mouseX * canvaseScale, mouseY * canvaseScale, 1 * stage.frameRate);
-			p.addForce("brownianForce", brownianForce);
+			var brownianForce:Brownian=new Brownian(1,Math.random()*3);
+			var p : Particle = particleSystem.createParticle(Particle);
+			p.init(mouseX * canvaseScale, mouseY * canvaseScale,1);
+			p.friction.reset(0.01, 0.01);
+			p.velocity.reset(mouseX-lastMouseX,mouseY-lastMouseY);
+			p.velocity.scale(.2);
+			//p.addForce("brownianForce", brownianForce);
+			//p.addForce("float", floatForce);
+//			if(lastParticle)
+//			{
+//				var attractionForce : Attraction = new Attraction(lastParticle.point, 0.5,50);
+//				p.addForce("attractionForce", attractionForce);
+//			}
+//			lastParticle=p;
+			lastMouseX=mouseX;
+			lastMouseY=mouseY;
+			
 		}
 	}
 }

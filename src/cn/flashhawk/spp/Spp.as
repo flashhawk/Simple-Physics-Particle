@@ -38,6 +38,7 @@ package cn.flashhawk.spp
 		public static const PROJECT_HOMEPAGE : String = "http://github.com/flashhawk/Simple-Physics-Particle";
 		public static const PROJECT_NAME : String = "Simple Physics Particle";
 		public static const VERSION : String = "2.0";	
+		public static var FPS:int=30;
 		public static function showInfo():void
 		{
 			trace(PROJECT_NAME+" "+VERSION);

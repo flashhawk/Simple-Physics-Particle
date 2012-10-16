@@ -1,30 +1,37 @@
-package cn.flashhawk.spp.particles 
+package cn.flashhawk.spp.particles
 {
-
 	/**
 	 * @author flashhawk
 	 * 简单粒子池
 	 */
-	public class ParticlePool 
+	public class ParticlePool
 	{
-		private var _array:Array=[];
-		private var _particleType:Class;
-		
-		public function ParticlePool(particleType:Class) 
+		private var _array : Array = [];
+
+		public function ParticlePool()
 		{
-			this._particleType = particleType;
 		}
-		public function get():Particle
+
+		public function get(particleType : Class) : Particle
 		{
-			if(_array.length==0)return new _particleType();
-			return Particle( _array.pop());
-			
+			var p : Particle;
+			for ( var i:String in _array)
+			{
+				if (_array[i].constructor == particleType)
+				{
+					p = _array[i];
+					_array.splice(int(i), 1);
+					return p;
+				}
+			}
+			return new particleType();
 		}
-		public function recycle(p:Particle):void
+
+		public function recycle(p : Particle) : void
 		{
 			_array.push(p);
 		}
-		
+
 		public function get array() : Array
 		{
 			return _array;

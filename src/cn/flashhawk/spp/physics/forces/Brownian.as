@@ -34,11 +34,11 @@
 
 		private function run() : void
 		{
-			updateBrown();
-			_timerID = setInterval(updateBrown, time);
+			customUpdate();
+			_timerID = setInterval(customUpdate, time);
 		}
 
-		private  function updateBrown() : void
+		private  function customUpdate() : void
 		{
 			var xv : Number = (Math.random()*2-1)*maxForce;
 			var yv : Number = (Math.random()*2-1)*maxForce;

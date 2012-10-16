@@ -1,5 +1,6 @@
 package tutorial
 {
+	import cn.flashhawk.spp.Spp;
 	import cn.flashhawk.spp.particles.*;
 	import cn.flashhawk.spp.physics.forces.Brownian;
 	import cn.flashhawk.spp.util.FPS;
@@ -14,11 +15,13 @@ package tutorial
 	[SWF(backgroundColor="#000000", frameRate="30", width="550", height="400")]
 	public class BrownForce_nodir extends Sprite 
 	{
-		private var ps:ParticlesSystem=new ParticlesSystem(BoundParticle);
+		private var ps:ParticlesSystem;
 		private var bound:Rectangle=new Rectangle(0,0,550,400);
 		public function BrownForce_nodir()
 		{
 			stage.scaleMode=StageScaleMode.NO_SCALE;
+			Spp.FPS=60;
+			ps=new ParticlesSystem(this.stage,null,renderAfter);
 			boom(275,200,200);
 			ps.startRendering();
 		}
@@ -28,16 +31,25 @@ package tutorial
 			for(var i : int = 0;i < count;i++)
 			{
 				var target : Sprite = createBall(0xFFFFFF*Math.random(),Math.random()*5+3);
-				var particle : BoundParticle = BoundParticle(ps.createParticle());
+				var particle : Particle = ps.createParticle(Particle);
 				particle.init(startx, starty);
-				particle.bounceIntensity=2;
-				particle.particleBound=bound;
-			   	var brownianForce : Brownian = new Brownian(2,0.5);
+				particle.bounceIntensity=3;
+				particle.boundary=bound;
+				particle.extra.target=target;
+			   	var brownianForce : Brownian = new Brownian(0.5,Math.random()*3);
 				particle.addForce("brownianForce", brownianForce);
-				particle.target = target;
 				addChild(target);
 			}
-			//addChild(new FPS());
+			addChild(new FPS());
+		}
+		public function renderAfter():void
+		{
+			var l:int = ps.particles.length;
+			while (l-- > 0)
+			{
+				ps.particles[l].extra.target.x=ps.particles[l].position.x;
+				ps.particles[l].extra.target.y=ps.particles[l].position.y;
+			}
 		}
 		private function createBall(color : uint,r : Number = NaN) : Sprite
 		{

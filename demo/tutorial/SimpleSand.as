@@ -1,5 +1,6 @@
 package tutorial
 {
+	import cn.flashhawk.spp.Spp;
 	import cn.flashhawk.spp.canvas.CanvasBMD;
 	import cn.flashhawk.spp.particles.*;
 	import cn.flashhawk.spp.physics.forces.Repulsion;
@@ -36,12 +37,12 @@ package tutorial
 		private function init(e : Event) : void
 		{
 			stageSetup();
-			ps = new ParticlesSystem(BoundParticle);
+			Spp.FPS=60;
+			ps = new ParticlesSystem(this.stage,null,loop);
 			sttractionPoint = new Point();
 			initCanvas();
 			boom(8000);
 			ps.startRendering();
-			this.addEventListener(Event.ENTER_FRAME, loop);
 			//addChild(new FPS());
 		}
 
@@ -61,14 +62,14 @@ package tutorial
 			canvase.height = stage.stageHeight;
 			addChild(canvase);
 		}
-		private function loop(e : Event) : void
+		private function loop() : void
 		{
 			var i : int = ps.particles.length;
 			bmd.lock();
 			bmd.clear();
 			while (i-- > 0)
 			{
-				bmd.setPixel(ps.particles[i].x, ps.particles[i].y, 0xffffff);
+				bmd.setPixel(ps.particles[i].position.x, ps.particles[i].position.y, 0xffffff);
 			}
 			sttractionPoint.x = mouseX;
 			sttractionPoint.y = mouseY;
@@ -80,12 +81,12 @@ package tutorial
 			bound = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
 			for (var i : int = 0;i < count;i++)
 			{
-				var particle : BoundParticle = BoundParticle(ps.createParticle());
+				var particle :Particle = ps.createParticle(Particle);
 				particle.init(stage.stageWidth * Math.random(), stage.stageHeight * Math.random());
 				particle.bounceIntensity = 1;
 				var repulsionForce : Repulsion = new Repulsion(sttractionPoint, 4, 60);
 				particle.addForce("repulsionForce", repulsionForce);
-				particle.particleBound = bound;
+				particle.boundary = bound;
 				
 			}
 		}
