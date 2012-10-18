@@ -21,7 +21,7 @@
 		/**
 		 * @param x X轴方向的力
 		 * @param y Y轴方向的力
-		 * @param life 生命周期 以帧为单位
+		 * @param life 生命周期 以秒为单位
 		 */
 		public function Force(x : Number, y : Number, life : Number = Infinity)
 		{
