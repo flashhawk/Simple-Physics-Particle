@@ -20,8 +20,9 @@ package tutorial
 		public function BrownForce_dir()
 		{
 			stage.scaleMode = StageScaleMode.NO_SCALE;
-			Spp.FPS = 60;
-			ps = new ParticlesSystem(this.stage, null, renderAfter);
+			ParticlesSystem.STAGE=stage;
+			ParticlesSystem.FPS = 60;
+			ps = new ParticlesSystem(loop);
 			boom(275, 200, 300);
 			ps.startRendering();
 		}
@@ -41,10 +42,9 @@ package tutorial
 				fireParticle.addForce("brownianForce", brownianForce);
 				addChild(target);
 			}
-			// addChild(new FPS());
 		}
 
-		public function renderAfter() : void
+		public function loop() : void
 		{
 			var l : int = ps.particles.length;
 			while (l-- > 0)
@@ -58,7 +58,6 @@ package tutorial
 		private function createArrow(color : uint) : Sprite
 		{
 			var s : Sprite = new Sprite();
-			// s.cacheAsBitmap = true;
 			s.graphics.beginFill(color);
 			s.graphics.drawPath(Vector.< int >([1, 2, 2, 2, 2, 2, 2, 2]), Vector.< Number >([-9, -7, -3, -7, -3, -11, 9, -4, -3, 3, -3, -1, -9, -1, -9, -7]));
 			s.graphics.endFill();

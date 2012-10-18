@@ -1,11 +1,12 @@
 ﻿package cn.flashhawk.spp.physics
 {
 	import cn.flashhawk.spp.events.ParticleEvent;
-	import flash.events.EventDispatcher;
-	import cn.flashhawk.spp.Spp;
 	import cn.flashhawk.spp.geom.Vector2D;
 	import cn.flashhawk.spp.particles.Particle;
+	import cn.flashhawk.spp.particles.ParticlesSystem;
+
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 
 	/**
 	 * 力场的基类,由次类可以扩展好多力,例如 布朗力
@@ -29,10 +30,10 @@
 		}
 		public function isLive() : Boolean
 		{
-			if ((_life -= 1 / Spp.FPS) <= 0)
+			if ((_life -= 1 / ParticlesSystem.FPS) <= 0)
 			{
-				destory();
 				dispatchEvent(new Event(ParticleEvent.DEAD));
+				destory();
 				return false;
 			}
 			update();

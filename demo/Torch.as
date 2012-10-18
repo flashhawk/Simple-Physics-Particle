@@ -55,7 +55,8 @@ package
 		private function init(e:Event):void
 		{
 			setStage();
-			particleSystem=new ParticlesSystem(stage,null,loop);
+			ParticlesSystem.STAGE=stage;
+			particleSystem=new ParticlesSystem(loop);
 			initCanvas();
 			var id : Number = setInterval(boom, 0);
 			particleSystem.startRendering();

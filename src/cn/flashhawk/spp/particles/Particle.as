@@ -1,16 +1,14 @@
 ﻿package cn.flashhawk.spp.particles
 {
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
-
-	import cn.flashhawk.spp.Spp;
-	import cn.flashhawk.spp.util.MathUtil;
 	import cn.flashhawk.spp.events.ParticleEvent;
 	import cn.flashhawk.spp.geom.Vector2D;
 	import cn.flashhawk.spp.physics.Force;
+	import cn.flashhawk.spp.util.MathUtil;
 
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
 
 	/**
 	 * @author flashhawk
@@ -18,44 +16,44 @@
 	public class Particle extends EventDispatcher
 	{
 		public var position : Vector2D = new Vector2D();
-		public var point:Point=new Point();
+		public var point : Point = new Point();
 		public var velocity : Vector2D = new Vector2D();
 		public var acceleration : Vector2D = new Vector2D();
 		public var friction : Vector2D = new Vector2D(0.1, 0.1) ;
 		private var _life : Number;
 		private var _forces : Object = {};
-		private var sumForce : Vector2D = new Vector2D();
+		private var _sumForce : Vector2D = new Vector2D();
 		/*
-		 * 碰到边界
+		 * 碰撞矩形边界
 		 */
-		public var boundary : Rectangle=null;
+		public var boundary : Rectangle = null;
 		/*
 		 * 碰到边界时候的反弹强度系数,默认是2
 		 */
 		public var bounceIntensity : Number = 2;
-		// TODO
-		// private var _bounds:Rectangle;
 		/*
 		 * 用来保存一些自定义的一些属性
 		 */
 		public 	var extra : Object = {};
+		
+		// TODO
+		// private var _bounds:Rectangle;
 
-		/**
-		 * @param target 被渲染的显示对象			 
-		 * @param x 
-		 * @param y 
-		 * @param life 粒子的生命周期以桢为单位
-		 * 		       
-		 */
 		public function Particle()
 		{
 		}
 
+		/**	 
+		 * @param x 
+		 * @param y 
+		 * @param life 粒子的生命周期以秒为单位
+		 * 		       
+		 */
 		public function init(x : Number, y : Number, life : Number = Infinity) : void
 		{
 			this.position.reset(x, y);
-			this.point.x=x;
-			this.point.y=y;
+			this.point.x = x;
+			this.point.y = y;
 			this.velocity.reset(0, 0);
 			this.acceleration.reset(0, 0);
 			this.friction.reset(0.1, 0.1);
@@ -66,6 +64,7 @@
 		{
 			this._forces = {};
 			this.extra = {};
+			this._sumForce.reset();
 		}
 
 		public function destory() : void
@@ -84,7 +83,7 @@
 		 */
 		protected function move() : void
 		{
-			sumForce.reset(0, 0);
+			_sumForce.reset(0, 0);
 			for (var i:String in _forces)
 			{
 				if (!_forces[i].isLive())
@@ -94,8 +93,8 @@
 				}
 				else
 				{
-					sumForce.plus(_forces[i].value);
-					acceleration.reset(sumForce.x, sumForce.y);
+					_sumForce.plus(_forces[i].value);
+					acceleration.reset(_sumForce.x, _sumForce.y);
 				}
 				;
 			}
@@ -103,14 +102,14 @@
 			velocity.x *= (1 - friction.x);
 			velocity.y *= (1 - friction.y);
 			position.plus(velocity);
-			point.x=position.x;
-			point.y=position.y;
-			if(boundary)bounce();
+			point.x = position.x;
+			point.y = position.y;
+			if (boundary) bounce();
 		}
 
 		public function isLive() : Boolean
 		{
-			if ((_life -= 1 / Spp.FPS) <= 0) return false;
+			if ((_life -= 1 / ParticlesSystem.FPS) <= 0) return false;
 			return true;
 		}
 

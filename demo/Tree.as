@@ -60,7 +60,8 @@ package
 				initCanvas();
 			});
 			stage.addEventListener(Event.RESIZE, initCanvas);
-			ps = new ParticlesSystem(stage, null, loop);
+			ParticlesSystem.STAGE=stage;
+			ps = new ParticlesSystem(loop);
 			initCanvas();
 			ps.startRendering();
 		}

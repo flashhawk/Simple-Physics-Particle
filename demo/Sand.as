@@ -41,7 +41,8 @@ package
 		{
 			stageSetup();
 			boundary=new Rectangle(0,0,stage.stageWidth*scale,stage.stageHeight*scale);
-			ps = new ParticlesSystem(stage,null,loop);
+			ParticlesSystem.STAGE=stage;
+			ps = new ParticlesSystem(loop);
 			sttractionPoint = new Point();
 			boom(10000);
 			resizeHandler(null);

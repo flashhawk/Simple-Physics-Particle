@@ -62,8 +62,9 @@ package
 			setStage();
 			lineCanvas = new Sprite();
 			initBitmapCanvas();
-			Spp.FPS=60;
-			particleSystem=new ParticlesSystem(this.stage,null,loop);
+			ParticlesSystem.STAGE=stage;
+			ParticlesSystem.FPS=60;
+			particleSystem=new ParticlesSystem(loop);
 			particleSystem.startRendering();
 			addChild(new FPS());
 		}

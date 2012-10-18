@@ -54,7 +54,8 @@ package
 		{
 			matrix.scale(0.1, 0.1);
 			setStage();
-			ps=new ParticlesSystem(stage,null,loop);
+			ParticlesSystem.STAGE=stage;
+			ps=new ParticlesSystem(loop);
 			initCanvas();
 			addChild(new FPS());
 			ps.startRendering();
@@ -121,7 +122,7 @@ package
 
 			while (l-- > 0)
 			{
-				var p=ps.particles[l];
+				var p:Particle=ps.particles[l];
 				if (ps.particles[l].extra.isFire)
 				{
 					canvasBmd.fillRect(new Rectangle(p.position.x, p.position.y, 4, 4), p.extra.color);

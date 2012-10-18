@@ -61,8 +61,8 @@ package
 		{
 			setStage();
 			initCanvas();
-			
-			ps=new ParticlesSystem(stage,null,loop);
+			ParticlesSystem.STAGE=stage;
+			ps=new ParticlesSystem(loop);
 			boom();
 			ps.startRendering();
 			stage.addEventListener(Event.RESIZE, initCanvas);

@@ -37,8 +37,9 @@ package tutorial
 		private function init(e : Event) : void
 		{
 			stageSetup();
-			Spp.FPS=60;
-			ps = new ParticlesSystem(this.stage,null,loop);
+			ParticlesSystem.STAGE=stage;
+			ParticlesSystem.FPS=60;
+			ps = new ParticlesSystem(loop);
 			sttractionPoint = new Point();
 			initCanvas();
 			boom(8000);

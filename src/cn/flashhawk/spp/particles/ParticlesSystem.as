@@ -4,7 +4,6 @@ package cn.flashhawk.spp.particles
 	import cn.flashhawk.spp.Spp;
 	import cn.flashhawk.spp.events.ParticleEvent;
 
-	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 
@@ -16,18 +15,18 @@ package cn.flashhawk.spp.particles
 		private var _particlePool : ParticlePool;
 		private var _particles : Array = [];
 		private var l : int;
-		private var _enterFrameObj : Sprite;
 		private var _renderBefore:Function;
 		private var _renderAfter:Function;
+	
+		public static var STAGE:Stage;
+		
 
-		public function ParticlesSystem(stage:Stage,renderBefore:Function=null,renderAfter:Function=null)
+		public function ParticlesSystem(renderAfter:Function=null,renderBefore:Function=null)
 		{
 			Spp.showInfo();
-			_enterFrameObj = new Sprite();
 			_particlePool = new ParticlePool();
 			this._renderBefore=renderBefore;
 			this._renderAfter=renderAfter;
-			stage.frameRate=Spp.FPS;
 		}
 
 		public function createParticle(particleType : Class) : Particle
@@ -49,13 +48,13 @@ package cn.flashhawk.spp.particles
 		public function startRendering() : void
 		{
 			
-			_enterFrameObj.addEventListener(Event.ENTER_FRAME, singleRender);
+			STAGE.addEventListener(Event.ENTER_FRAME, singleRender);
 		}
 
 		public function stopRendering() : void
 		{
 			
-			_enterFrameObj.removeEventListener(Event.ENTER_FRAME, singleRender);
+			STAGE.removeEventListener(Event.ENTER_FRAME, singleRender);
 		}
 
 		public function removeParticle(p : Particle) : void
@@ -63,8 +62,8 @@ package cn.flashhawk.spp.particles
 			var index : int = _particles.indexOf(p);
 			if (index == -1) return;
 			_particles.splice(index, 1);
-			p.reset();
 			p.removeEventListener(ParticleEvent.DEAD, removeDeadParticle);
+			p.reset();
 			_particlePool.recycle(p);
 			index = NaN;
 		}
@@ -134,5 +133,16 @@ package cn.flashhawk.spp.particles
 		{
 			return _particlePool;
 		}
+
+		public  static function get FPS() : int
+		{
+			return STAGE.frameRate;
+		}
+
+		public  static function set FPS(f : int) : void
+		{
+			STAGE.frameRate=f;
+		}
+
 	}
 }

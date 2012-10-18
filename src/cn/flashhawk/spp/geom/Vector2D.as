@@ -29,7 +29,7 @@
 			return temp;
 		}
 
-		public function reset(x : Number, y : Number) : void
+		public function reset(x : Number=0, y : Number=0) : void
 		{
 			init(x, y);
 		}

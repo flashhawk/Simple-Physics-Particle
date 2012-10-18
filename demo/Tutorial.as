@@ -28,7 +28,8 @@ package
 		{
 			/*参数为粒子的类型,例如Particle, BoundParticle,或者你自定义的粒子类 */
 			/* What type of particle parameters, such as Particle, BoundParticle, or your custom partilce class.*/
-			ps = new ParticlesSystem(stage,null,loop);
+			ParticlesSystem.STAGE=stage;
+			ps = new ParticlesSystem(loop);
 
 			for (var i : int = 0;i < 100;i++)
 			{

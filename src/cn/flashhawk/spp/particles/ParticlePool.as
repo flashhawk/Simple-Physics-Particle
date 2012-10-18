@@ -1,5 +1,6 @@
 package cn.flashhawk.spp.particles
 {
+
 	/**
 	 * @author flashhawk
 	 * 简单粒子池

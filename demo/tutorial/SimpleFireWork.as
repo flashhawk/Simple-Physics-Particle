@@ -26,8 +26,9 @@ package tutorial
 		{
 			setStage();
 			initCanvas();
-			Spp.FPS = 60;
-			ps = new ParticlesSystem(this.stage, null, renderAfter);
+			ParticlesSystem.STAGE=stage;
+			ParticlesSystem.FPS = 60;
+			ps = new ParticlesSystem(loop);
 			ps.startRendering();
 		}
 
@@ -44,7 +45,6 @@ package tutorial
 			particleContainer.blendMode = BlendMode.ADD;
 			particleContainer.cacheAsBitmap = true;
 			addChild(particleContainer);
-			// addChild(new FPS());
 		}
 
 		private function fire(e : MouseEvent) : void
@@ -58,7 +58,7 @@ package tutorial
 			fireParticle.velocity.reset(0, -(5 + Math.random() * 4));
 			fireParticle.velocity.rotate(15 - Math.random() * 30);
 			fireParticle.friction.reset(0, 0);
-			fireParticle.addForce("gravity", gravity)
+			fireParticle.addForce("gravity", gravity);
 			fireParticle.addEventListener('dead', boom);
 			particleContainer.addChild(target);
 		}
@@ -77,7 +77,7 @@ package tutorial
 
 				fireParticle.init(particle.position.x, particle.position.y, 1.5);
 				fireParticle.extra.target = target;
-				fireParticle.velocity.reset(0, 3* Math.random() + 1);
+				fireParticle.velocity.reset(0, 3 * Math.random() + 1);
 				fireParticle.velocity.rotate(Math.random() * 360);
 				fireParticle.friction.reset(0, 0);
 				fireParticle.addForce("g", gravity);
@@ -86,7 +86,7 @@ package tutorial
 			}
 		}
 
-		public function renderAfter() : void
+		public function loop() : void
 		{
 			var l : int = ps.particles.length;
 			while (l-- > 0)
