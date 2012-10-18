@@ -47,7 +47,7 @@ package
 			boom(10000);
 			resizeHandler(null);
 			ps.startRendering();
-			addChild(new FPS());
+			//addChild(new FPS());
 		}
 
 		private function stageSetup() : void

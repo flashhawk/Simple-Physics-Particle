@@ -60,7 +60,7 @@ package
 			initCanvas();
 			var id : Number = setInterval(boom, 0);
 			particleSystem.startRendering();
-			addChild(new FPS());
+			//addChild(new FPS());
 		}
 		private function setStage() : void
 		{

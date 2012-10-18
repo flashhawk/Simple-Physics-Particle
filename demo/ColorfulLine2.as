@@ -66,7 +66,7 @@ package
 			ParticlesSystem.FPS=60;
 			particleSystem=new ParticlesSystem(loop);
 			particleSystem.startRendering();
-			addChild(new FPS());
+			//addChild(new FPS());
 		}
 		private function setStage() : void
 		{

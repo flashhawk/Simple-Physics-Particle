@@ -52,7 +52,7 @@ package
 			ParticlesSystem.STAGE=stage;
 			particleSystem = new ParticlesSystem(loop);
 			particleSystem.startRendering();
-			addChild(new FPS());
+			//addChild(new FPS());
 		}
 
 		private function setStage() : void
@@ -127,9 +127,9 @@ package
 
 		private function createFlow(e : Event) : void
 		{
-			var brownianForce : Brownian = new Brownian(Math.random(), Math.random());
+			var brownianForce : Brownian = new Brownian(0.4,0.1);
 			var p : Particle = particleSystem.createParticle(Particle);
-			p.init(mouseX * canvaseScale, mouseY * canvaseScale, 1);
+			p.init(mouseX * canvaseScale, mouseY * canvaseScale, 0.8);
 			p.addForce("brownianForce", brownianForce);
 		}
 	}

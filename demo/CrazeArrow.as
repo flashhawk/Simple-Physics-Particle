@@ -64,7 +64,7 @@ package
 			boom(2500);
 			resizeHandler(null);
 			ps.startRendering();
-			addChild(new FPS());
+			//addChild(new FPS());
 			initTitleText();
 		}
 
