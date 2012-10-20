@@ -61,7 +61,7 @@ package
 			ps = new ParticlesSystem(loop);
 			sttractionPoint = new Point();
 			initBmdArray();
-			boom(2500);
+			boom(3000);
 			resizeHandler(null);
 			ps.startRendering();
 			//addChild(new FPS());
@@ -196,7 +196,7 @@ package
 				fireParticle.boundary = boundary;
 				var repulsionForce : Repulsion = new Repulsion(sttractionPoint, 8, 100);
 				fireParticle.addForce("repulsionForce", repulsionForce);
-				var brownForce : Brownian = new Brownian(0.5, Math.random()*2);
+				var brownForce : Brownian = new Brownian(0.5, Math.random()*2+1);
 				fireParticle.addForce("brown", brownForce);
 				fireParticle.init(stage.stageWidth * scale / 2, stage.stageHeight * scale / 2);
 			}
